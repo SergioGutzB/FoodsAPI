@@ -10,7 +10,7 @@ var User        = require('./app/models/user'); // get the mongoose model
 var Food        = require('./app/models/food'); // get the mongoose model
 var Message     = require('./app/models/message'); // get the mongoose model
 var Alert       = require('./app/models/alert'); // get the mongoose model
-var port 	      = process.env.PORT || 3000;
+var port 	      = process.env.PORT || 8080;
 var jwt 			  = require('jwt-simple');
 
 process.env.TZ = 'America/Bogota';
@@ -33,10 +33,10 @@ app.use(passport.initialize());
 
 // demo Route (GET http://localhost:8080)
 app.get('/', function(req, res) {
-  res.send('Hello! The API is at http://localhost:' + port + '/api');
+  res.send('Hello World, From /');
 });
 
-app.listen(3000, "0.0.0.0");
+
 mongoose.connect(config.database);
 
 require('./config/passport')(passport);
