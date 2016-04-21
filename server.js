@@ -10,7 +10,7 @@ var User        = require('./app/models/user'); // get the mongoose model
 var Food        = require('./app/models/food'); // get the mongoose model
 var Message     = require('./app/models/message'); // get the mongoose model
 var Alert       = require('./app/models/alert'); // get the mongoose model
-var port 	      = process.env.PORT || 8080;
+var port 	      = process.env.PORT || 3000;
 var jwt 			  = require('jwt-simple');
 
 process.env.TZ = 'America/Bogota';
