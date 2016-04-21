@@ -36,6 +36,7 @@ app.get('/', function(req, res) {
   res.send('Hello! The API is at http://localhost:' + port + '/api');
 });
 
+app.listen(3000, "0.0.0.0");
 mongoose.connect(config.database);
 
 require('./config/passport')(passport);
