@@ -20,6 +20,7 @@ process.env.TZ = 'America/Bogota';
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+app.use(express.static('./images'));
 // log to console
 app.use(morgan('dev'));
 
