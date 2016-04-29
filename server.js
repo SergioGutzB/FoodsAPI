@@ -12,6 +12,8 @@ var Message     = require('./app/models/message'); // get the mongoose model
 var Alert       = require('./app/models/alert'); // get the mongoose model
 var port 	      = process.env.PORT || 8080;
 var jwt 			  = require('jwt-simple');
+var multipart = require('connect-multiparty');
+
 
 process.env.TZ = 'America/Bogota';
 // get our request parameters
@@ -20,6 +22,8 @@ app.use(bodyParser.json());
 
 // log to console
 app.use(morgan('dev'));
+
+app.use(multipart()) //Express 4
 
 app.use(function(req, res, next) {
 res.setHeader('Access-Control-Allow-Origin', '*');
@@ -280,7 +284,29 @@ apiRoutes.post('/food/', function(req, res) {
 });
 
 apiRoutes.post('/addFood', passport.authenticate('jwt', {session: false}), function(req, res) {
+  var fs = require('fs')
   var token = getToken(req.headers);
+  var path = req.files.image.path;
+  var newPath = './images/'+ req.files.image.name;
+  var is = fs.createReadStream(path)
+  var os = fs.createWriteStream(newPath)
+
+  is.pipe(os)
+   is.on('end', function() {
+      //eliminamos el archivo temporal
+      fs.unlinkSync(path)
+   })
+
+  // fs.rename(path, newPath, function(err) {
+  //     if (err) throw err;
+  //     // Eliminamos el fichero temporal
+  //     fs.unlink(path, function() {
+  //         if (err) throw err;          
+  //     });
+  //  });
+
+  
+
   if (token) {
     var decoded = jwt.decode(token, config.secret);
 
@@ -294,7 +320,7 @@ apiRoutes.post('/addFood', passport.authenticate('jwt', {session: false}), funct
         user_id: decoded._id,
         expires: req.body.expires,
         type: req.body.type,
-        image: req.body.image,
+        image: newPath,
         create: Moment().tz('America/Bogota').format()
       });
       newFood.save(function(err) {
