@@ -286,9 +286,12 @@ apiRoutes.post('/food/', function(req, res) {
 
 apiRoutes.post('/addFood', passport.authenticate('jwt', {session: false}), function(req, res) {
   var fs = require('fs')
+  console.log(req.files)
   var token = getToken(req.headers);
   var path = req.files.image.path;
-  var newPath = './images/'+ req.files.image.name;
+  var type = req.files.image.name.split(".");
+  var nameCrypto = encriptar(req.files.image.name, Moment().tz('America/Bogota').format()) + "." + type[1];
+  var newPath = './images/'+ nameCrypto;
   var is = fs.createReadStream(path)
   var os = fs.createWriteStream(newPath)
 
@@ -321,7 +324,7 @@ apiRoutes.post('/addFood', passport.authenticate('jwt', {session: false}), funct
         user_id: decoded._id,
         expires: req.body.expires,
         type: req.body.type,
-        image: newPath,
+        image: nameCrypto,
         create: Moment().tz('America/Bogota').format()
       });
       newFood.save(function(err) {
@@ -346,3 +349,10 @@ app.use('/api', apiRoutes);
 // Start the server
 app.listen(port);
 console.log('There will be dragons: http://localhost:' + port);
+
+function encriptar(user, pass) {
+   var crypto = require('crypto')
+   // usamos el metodo CreateHmac y le pasamos el parametro user y actualizamos el hash con la password
+   var hmac = crypto.createHmac('sha1', user).update(pass).digest('hex')
+   return hmac
+}
