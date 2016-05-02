@@ -357,11 +357,11 @@ apiRoutes.post('/update_food', passport.authenticate('jwt', {session: false}), f
   if (token) {
     var decoded = jwt.decode(token, config.secret);
 
-    Food.findById({_id: req.body.food_id}, function(err, food) {
+    Food.findOne({_id: req.body.food_id},function(err, food) {
       if (err) throw err;
 
       if (!food) {
-        return res.status(403).send({success: false, msg: 'Authentication failed. food not found.'});
+        return res.status(403).send({success: false, msg: 'Food not found.'});
       } else {
         if (req.body.name)   food.name    = req.body.name;
         if (req.body.peso)  food.peso   = req.body.peso;
@@ -369,7 +369,7 @@ apiRoutes.post('/update_food', passport.authenticate('jwt', {session: false}), f
         if (req.body.image)       food.image        = req.body.image;
         if (req.body.type)     food.type      = req.body.type;
         if (req.body.lat)         food.lat          = req.body.lat;
-        if (req.body.log)         food.log          = req.body.log;
+        if (req.body.lng)         food.lng          = req.body.lng;
         if (req.body.expires)       food.phone        = req.body.expires;
         if (req.body.state)       food.state        = req.body.state;
         food.save(function(err){
