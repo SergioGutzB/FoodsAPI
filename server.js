@@ -217,8 +217,23 @@ apiRoutes.post('/deleted_alert', passport.authenticate('jwt', {session: false}),
 });
 
 
-
-
+//Eliminar food 
+apiRoutes.post('/deleted_food', passport.authenticate('jwt', {session: false}), function(req, res) {
+  var token = getToken(req.headers);
+  if (token) {
+    var decoded = jwt.decode(token, config.secret);
+    if (req.body.food_id)
+      Food.findOneAndRemove({_id: req.body.food_id}, function(err){
+        if (err) {
+          res.json({succes: false, msg: 'Error deleting food!'});
+        } else {
+          res.json({succes: true, msg: 'Successful deleting food!'});
+        }
+    });
+  } else {
+    return res.status(403).send({success: false, msg: 'No token provided.'});
+  }
+});
 
 
 
@@ -319,7 +334,9 @@ apiRoutes.post('/addFood', passport.authenticate('jwt', {session: false}), funct
         expires: req.body.expires,
         type: req.body.type,
         image: nameCrypto,
-        create: Moment().tz('America/Bogota').format()
+        create: Moment().tz('America/Bogota').format(),
+	lat: req.body.lat,
+        lng: req.body.lng
       });
       newFood.save(function(err) {
         if (err) {
@@ -334,6 +351,37 @@ apiRoutes.post('/addFood', passport.authenticate('jwt', {session: false}), funct
   }
 });
 
+//Actualizar informacion del usuario
+apiRoutes.post('/update_food', passport.authenticate('jwt', {session: false}), function(req, res) {
+  var token = getToken(req.headers);
+  if (token) {
+    var decoded = jwt.decode(token, config.secret);
+
+    Food.findById({_id: req.body.food_id}, function(err, food) {
+      if (err) throw err;
+
+      if (!food) {
+        return res.status(403).send({success: false, msg: 'Authentication failed. food not found.'});
+      } else {
+        if (req.body.name)   food.name    = req.body.name;
+        if (req.body.peso)  food.peso   = req.body.peso;
+        if (req.body.description)   food.description    = req.body.description;
+        if (req.body.image)       food.image        = req.body.image;
+        if (req.body.type)     food.type      = req.body.type;
+        if (req.body.lat)         food.lat          = req.body.lat;
+        if (req.body.log)         food.log          = req.body.log;
+        if (req.body.expires)       food.phone        = req.body.expires;
+        if (req.body.state)       food.state        = req.body.state;
+        food.save(function(err){
+          if (err) throw err;
+          return res.json({success: true, msg: 'food ' + food.food_name + ' successfully updated!'});
+        });        
+      }
+    });
+  } else {
+    return res.status(403).send({success: false, msg: 'No token provided.'});
+  }
+});
 
 
 
