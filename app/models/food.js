@@ -12,6 +12,8 @@ var FoodSchema = new Schema({
     create: {type: Date},
     user_id: String,
     state: String,
+    lat: String,
+    lng: String,
 });
 
 

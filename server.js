@@ -61,8 +61,9 @@ apiRoutes.post('/signup', function(req, res) {
       image: req.body.image,
       address: req.body.address,
       phone: req.body.phone,
-      lat: '',
-      log: '',
+      code_postal: req.body.code_postal,
+      lat: req.body.lat,
+      log: req.body.log,
 
     });
     newUser.save(function(err) {
@@ -156,6 +157,8 @@ apiRoutes.post('/update_user', passport.authenticate('jwt', {session: false}), f
         if (req.body.address)     user.address      = req.body.address;
         if (req.body.lat)         user.lat          = req.body.lat;
         if (req.body.log)         user.log          = req.body.log;
+        if (req.body.phone)       user.phone        = req.body.phone;
+        if (req.body.code_postal)       user.code_postal        = req.body.code_postal;
         user.save(function(err){
           if (err) throw err;
           return res.json({success: true, msg: 'User ' + user.user_name + ' successfully updated!'});
@@ -286,11 +289,12 @@ apiRoutes.post('/food/', function(req, res) {
 
 apiRoutes.post('/addFood', passport.authenticate('jwt', {session: false}), function(req, res) {
   var fs = require('fs')
+  console.log(req)
   console.log(req.files)
   var token = getToken(req.headers);
-  var path = req.files.image.path;
-  var type = req.files.image.name.split(".");
-  var nameCrypto = encriptar(req.files.image.name, Moment().tz('America/Bogota').format()) + "." + type[1];
+  var path = req.files.file.path;
+  var type = req.files.file.name.split(".");
+  var nameCrypto = encriptar(req.files.file.name, Moment().tz('America/Bogota').format()) + "." + type[1];
   var newPath = './images/'+ nameCrypto;
   var is = fs.createReadStream(path)
   var os = fs.createWriteStream(newPath)
@@ -300,16 +304,6 @@ apiRoutes.post('/addFood', passport.authenticate('jwt', {session: false}), funct
       //eliminamos el archivo temporal
       fs.unlinkSync(path)
    })
-
-  // fs.rename(path, newPath, function(err) {
-  //     if (err) throw err;
-  //     // Eliminamos el fichero temporal
-  //     fs.unlink(path, function() {
-  //         if (err) throw err;          
-  //     });
-  //  });
-
-  
 
   if (token) {
     var decoded = jwt.decode(token, config.secret);

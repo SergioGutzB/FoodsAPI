@@ -16,6 +16,7 @@ var UserSchema = new Schema({
   phone: {type: String},
   lat: {type: String},
   log: {type: String},
+  code_postal: {type: String}
 });
 
 UserSchema.pre('save', function (next) {
