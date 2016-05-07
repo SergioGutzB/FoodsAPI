@@ -142,6 +142,7 @@ apiRoutes.post('/alerts_two', passport.authenticate('jwt', {session: false}), fu
   var token = getToken(req.headers);
   if (token) {
     var decoded = jwt.decode(token, config.secret);
+    console.log("user_id: "+ req.body.user_id+" sender_id: "+decoded._id)
     Alert.find({user_id: req.body.user_id, sender_id: decoded._id}, function(err, alert) {
       if (err) throw err;
 
