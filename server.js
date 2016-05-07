@@ -180,7 +180,8 @@ apiRoutes.post('/send_alert', passport.authenticate('jwt', {session: false}), fu
       food_id: req.body.food_id,
       sender_id: decoded._id,
       user_id: req.body.user_id,
-      message: req.body.message
+      message: req.body.message,
+      create: Moment().tz('America/Bogota').format(),
     });
 
     new_alert.save(function(err) {
@@ -196,7 +197,6 @@ apiRoutes.post('/send_alert', passport.authenticate('jwt', {session: false}), fu
     return res.status(403).send({success: false, msg: 'No token provided.'});
   }
 });
-
 
 //Eliminar alerta 
 apiRoutes.post('/deleted_alert', passport.authenticate('jwt', {session: false}), function(req, res) {
@@ -335,7 +335,7 @@ apiRoutes.post('/addFood', passport.authenticate('jwt', {session: false}), funct
         type: req.body.type,
         image: nameCrypto,
         create: Moment().tz('America/Bogota').format(),
-	lat: req.body.lat,
+	      lat: req.body.lat,
         lng: req.body.lng
       });
       newFood.save(function(err) {
