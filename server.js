@@ -119,7 +119,7 @@ apiRoutes.get('/user', passport.authenticate('jwt', {session: false}), function(
 });
 
 //Obetener la lista de alerta del usuario - usuario propio
-apiRoutes.get('/alerts', passport.authenticate('jwt', {session: false}), function(req, res) {
+apiRoutes.post('/alerts', passport.authenticate('jwt', {session: false}), function(req, res) {
   var token = getToken(req.headers);
   if (token) {
     var decoded = jwt.decode(token, config.secret);
