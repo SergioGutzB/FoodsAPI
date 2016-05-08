@@ -154,59 +154,6 @@ apiRoutes.post('/alerts_food', passport.authenticate('jwt', {session: false}), f
   }
 });
 
-//Obetener la lista de alerta del usuario - usuario propio y usuario sender
-apiRoutes.post('/alerts_two', passport.authenticate('jwt', {session: false}), function(req, res) {
-  var token = getToken(req.headers);
-  if (token) {
-    var decoded = jwt.decode(token, config.secret);
-    console.log("user_id: "+ req.body.user_id+" sender_id: "+decoded._id)
-    Alert.find({user_id: req.body.user_id, sender_id: decoded._id}, function(err, alert) {
-      if (err) throw err;
-
-      if (!alert) {
-        return res.status(403).send({success: false, msg: 'Authentication failed. Alerts not found.'});
-      } else {
-        return res.json({success: true, msg: 'List alerts', alerts:alert});
-      }
-    });
-  } else {
-    return res.status(403).send({success: false, msg: 'No token provided.'});
-  }
-});
-
-
-//Actualizar informacion del usuario
-apiRoutes.post('/update_user', passport.authenticate('jwt', {session: false}), function(req, res) {
-  var token = getToken(req.headers);
-  if (token) {
-    var decoded = jwt.decode(token, config.secret);
-
-    User.findById({_id: decoded._id}, function(err, user) {
-      if (err) throw err;
-
-      if (!user) {
-        return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
-      } else {
-        if (req.body.user_name)   user.user_name    = req.body.user_name;
-        if (req.body.first_name)  user.first_name   = req.body.first_name;
-        if (req.body.last_name)   user.last_name    = req.body.last_name;
-        if (req.body.image)       user.image        = req.body.image;
-        if (req.body.address)     user.address      = req.body.address;
-        if (req.body.lat)         user.lat          = req.body.lat;
-        if (req.body.log)         user.log          = req.body.log;
-        if (req.body.phone)       user.phone        = req.body.phone;
-        if (req.body.code_postal)       user.code_postal        = req.body.code_postal;
-        user.save(function(err){
-          if (err) throw err;
-          return res.json({success: true, msg: 'User ' + user.user_name + ' successfully updated!'});
-        });        
-      }
-    });
-  } else {
-    return res.status(403).send({success: false, msg: 'No token provided.'});
-  }
-});
-
 //Funcion para enviar alerta a un usuario sobre el alimento. 
 apiRoutes.post('/send_alert', passport.authenticate('jwt', {session: false}), function(req, res) {
   var token = getToken(req.headers);
@@ -274,16 +221,16 @@ apiRoutes.post('/deleted_alert', passport.authenticate('jwt', {session: false}),
   }
 });
 
-//Eliminar todas las alertas por usuario
-apiRoutes.get('/deleted_all_alert', passport.authenticate('jwt', {session: false}), function(req, res) {
+//Obetener la lista de alerta del usuario - usuario propio y usuario sender
+apiRoutes.post('/alerts_id', passport.authenticate('jwt', {session: false}), function(req, res) {
   var token = getToken(req.headers);
   if (token) {
-    var decoded = jwt.decode(token, config.secret);
-    Alert.removeTodo({user_id: decoded._id}, function(err){
-      if (err) {
-        res.json({succes: false, msg: 'Error deleting all alert!'});
+    Alert.findOne({_id: req.body.alert_id}, function(err, alert) {
+      if (err) throw err;
+      if (!alert) {
+        return res.status(403).send({success: false, msg: 'Authentication failed. Alert not found.'});
       } else {
-        res.json({succes: true, msg: 'Successful deleting all alert!'});
+        return res.json({success: true, msg: 'Alert', alert:alert});
       }
     });
   } else {
@@ -291,6 +238,38 @@ apiRoutes.get('/deleted_all_alert', passport.authenticate('jwt', {session: false
   }
 });
 
+
+//Actualizar informacion del usuario
+apiRoutes.post('/update_user', passport.authenticate('jwt', {session: false}), function(req, res) {
+  var token = getToken(req.headers);
+  if (token) {
+    var decoded = jwt.decode(token, config.secret);
+
+    User.findById({_id: decoded._id}, function(err, user) {
+      if (err) throw err;
+
+      if (!user) {
+        return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
+      } else {
+        if (req.body.user_name)   user.user_name    = req.body.user_name;
+        if (req.body.first_name)  user.first_name   = req.body.first_name;
+        if (req.body.last_name)   user.last_name    = req.body.last_name;
+        if (req.body.image)       user.image        = req.body.image;
+        if (req.body.address)     user.address      = req.body.address;
+        if (req.body.lat)         user.lat          = req.body.lat;
+        if (req.body.log)         user.log          = req.body.log;
+        if (req.body.phone)       user.phone        = req.body.phone;
+        if (req.body.code_postal)       user.code_postal        = req.body.code_postal;
+        user.save(function(err){
+          if (err) throw err;
+          return res.json({success: true, msg: 'User ' + user.user_name + ' successfully updated!'});
+        });        
+      }
+    });
+  } else {
+    return res.status(403).send({success: false, msg: 'No token provided.'});
+  }
+});
 
 //Eliminar food 
 apiRoutes.post('/deleted_food', passport.authenticate('jwt', {session: false}), function(req, res) {
