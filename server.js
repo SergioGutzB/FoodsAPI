@@ -211,8 +211,7 @@ apiRoutes.post('/update_user', passport.authenticate('jwt', {session: false}), f
 apiRoutes.post('/send_alert', passport.authenticate('jwt', {session: false}), function(req, res) {
   var token = getToken(req.headers);
   if (token) {
-    var decoded = jwt.decode(token, config.secret);
-    
+    var decoded = jwt.decode(token, config.secret);    
     var new_alert = new Alert({
       food_id: req.body.food_id,
       sender_id: decoded._id,
@@ -220,7 +219,6 @@ apiRoutes.post('/send_alert', passport.authenticate('jwt', {session: false}), fu
       message: req.body.message,
       create: Moment().tz('America/Bogota').format(),
     });
-
     new_alert.save(function(err) {
       if (err) {
         res.json({succes: false, msg: 'Error sending alert!'});
@@ -228,12 +226,35 @@ apiRoutes.post('/send_alert', passport.authenticate('jwt', {session: false}), fu
         res.json({succes: true, msg: 'Successful sending alert!'});
       }
     });
-    
-
   } else {
     return res.status(403).send({success: false, msg: 'No token provided.'});
   }
 });
+
+//Funcion para enviar alerta a un usuario sobre el alimento. 
+apiRoutes.post('/update_alert', passport.authenticate('jwt', {session: false}), function(req, res) {
+  var token = getToken(req.headers);
+  if (token) {
+    var decoded = jwt.decode(token, config.secret);    
+    Alert.findById({_id: req.body.alert_id}, function(err, alert) {
+    if (err) throw err;
+
+    if (!alert) {
+      return res.status(403).send({success: false, msg: 'Authentication failed. Alert not found.'});
+    } else {
+      if (req.body.message)   alert.message    = req.body.message;
+      
+      alert.save(function(err){
+        if (err) throw err;
+        return res.json({success: true, msg: 'User ' + alert + ' successfully updated alert!'});
+      });        
+    }
+  });
+  } else {
+    return res.status(403).send({success: false, msg: 'No token provided.'});
+  }
+});
+
 
 //Eliminar alerta 
 apiRoutes.post('/deleted_alert', passport.authenticate('jwt', {session: false}), function(req, res) {
