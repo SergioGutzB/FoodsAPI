@@ -154,6 +154,24 @@ apiRoutes.post('/alerts_food', passport.authenticate('jwt', {session: false}), f
   }
 });
 
+//Obetener la lista de alerta del usuario - usuario propio
+apiRoutes.post('/alerts_sender', passport.authenticate('jwt', {session: false}), function(req, res) {
+  var token = getToken(req.headers);
+  if (token) {
+    var decoded = jwt.decode(token, config.secret);
+    Alert.findOne({food_id: req.body.food_id, sender_id: req.body.sender_id}, function(err, alert) {
+      if (err) throw err;
+      if (!alert) {
+        return res.status(403).send({success: false, msg: 'Authentication failed. Alert not found.'});
+      } else {
+        return res.json({success: true, msg: 'Alert by sender', alert:alert});
+      }
+    });
+  } else {
+    return res.status(403).send({success: false, msg: 'No token provided.'});
+  }
+});
+
 //Funcion para enviar alerta a un usuario sobre el alimento. 
 apiRoutes.post('/send_alert', passport.authenticate('jwt', {session: false}), function(req, res) {
   var token = getToken(req.headers);
