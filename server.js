@@ -159,15 +159,18 @@ apiRoutes.post('/alerts_sender', passport.authenticate('jwt', {session: false}),
   var token = getToken(req.headers);
   if (token) {
     var decoded = jwt.decode(token, config.secret);
+    console.log("food_id "+ req.body.food_id + "sender_id "+ req.body.sender_id)
     Alert.findOne({food_id: req.body.food_id, sender_id: req.body.sender_id}, function(err, alert) {
       if (err) throw err;
       if (!alert) {
+        console.log("Authentication failed. Alert not found.")
         return res.status(403).send({success: false, msg: 'Authentication failed. Alert not found.'});
       } else {
         return res.json({success: true, msg: 'Alert by sender', alert:alert});
       }
     });
   } else {
+    console.log("No token provided.")
     return res.status(403).send({success: false, msg: 'No token provided.'});
   }
 });
