@@ -235,7 +235,7 @@ apiRoutes.post('/deleted_alert', passport.authenticate('jwt', {session: false}),
 });
 
 //Eliminar todas las alertas por usuario
-apiRoutes.post('/deleted_all_alert', passport.authenticate('jwt', {session: false}), function(req, res) {
+apiRoutes.get('/deleted_all_alert', passport.authenticate('jwt', {session: false}), function(req, res) {
   var token = getToken(req.headers);
   if (token) {
     var decoded = jwt.decode(token, config.secret);
