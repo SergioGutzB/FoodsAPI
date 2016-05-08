@@ -258,7 +258,7 @@ apiRoutes.post('/deleted_food', passport.authenticate('jwt', {session: false}), 
   if (token) {
     var decoded = jwt.decode(token, config.secret);
     if (req.body.food_id)
-      Food.findOneAndRemove({_id: req.body.food_id}, function(err){
+      Food.findAndRemove({_id: req.body.food_id}, function(err){
         if (err) {
           res.json({succes: false, msg: 'Error deleting food!'});
         } else {
