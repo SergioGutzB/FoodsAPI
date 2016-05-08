@@ -332,7 +332,7 @@ apiRoutes.get('/foods', function(req, res) {
 
 //listar alimentos por usuario
 apiRoutes.post('/foods_user', function(req, res) { 
-  Food.findOne({user_id: req.body.user_id},function(err, food) {
+  Food.find({user_id: req.body.user_id},function(err, food) {
     if (err) throw err;
 
     if (!food) {
