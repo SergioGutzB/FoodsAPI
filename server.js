@@ -239,7 +239,7 @@ apiRoutes.get('/deleted_all_alert', passport.authenticate('jwt', {session: false
   var token = getToken(req.headers);
   if (token) {
     var decoded = jwt.decode(token, config.secret);
-    Alert.findAndRemove({user_id: decoded._id}, function(err){
+    Alert.findRemove({user_id: decoded._id}, function(err){
       if (err) {
         res.json({succes: false, msg: 'Error deleting all alert!'});
       } else {
