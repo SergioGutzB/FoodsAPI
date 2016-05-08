@@ -5,7 +5,7 @@ var AlertSchema = new Schema({
   food_id: {type: String},
   sender_id: {type: String},
   user_id: {type: String},
-  message: {type: String},
+  message: [],
   create: {type: Date, default: Date.now}
 });
 
