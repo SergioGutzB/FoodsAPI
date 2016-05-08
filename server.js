@@ -102,9 +102,7 @@ apiRoutes.get('/user', passport.authenticate('jwt', {session: false}), function(
   var token = getToken(req.headers);
   if (token) {
     var decoded = jwt.decode(token, config.secret);
-    User.findOne({
-      _id: decoded._id
-    }, function(err, user) {
+    User.findOne({_id: decoded._id}, function(err, user) {
       if (err) throw err;
 
       if (!user) {
@@ -230,6 +228,23 @@ apiRoutes.post('/deleted_alert', passport.authenticate('jwt', {session: false}),
         } else {
           res.json({succes: true, msg: 'Successful deleting alert!'});
         }
+    });
+  } else {
+    return res.status(403).send({success: false, msg: 'No token provided.'});
+  }
+});
+
+//Eliminar todas las alertas por usuario
+apiRoutes.post('/deleted_all_alert', passport.authenticate('jwt', {session: false}), function(req, res) {
+  var token = getToken(req.headers);
+  if (token) {
+    var decoded = jwt.decode(token, config.secret);
+    Alert.findOneAndRemove({user_id: decoded._id}, function(err){
+      if (err) {
+        res.json({succes: false, msg: 'Error deleting all alert!'});
+      } else {
+        res.json({succes: true, msg: 'Successful deleting all alert!'});
+      }
     });
   } else {
     return res.status(403).send({success: false, msg: 'No token provided.'});
