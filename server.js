@@ -135,6 +135,25 @@ apiRoutes.post('/alerts', passport.authenticate('jwt', {session: false}), functi
   }
 });
 
+//Obetener la lista de alerta del usuario - usuario propio
+apiRoutes.post('/alerts_food', passport.authenticate('jwt', {session: false}), function(req, res) {
+  var token = getToken(req.headers);
+  if (token) {
+    var decoded = jwt.decode(token, config.secret);
+    Alert.find({food_id: req.body.food_id}, function(err, alert) {
+      if (err) throw err;
+
+      if (!alert) {
+        return res.status(403).send({success: false, msg: 'Authentication failed. Alerts not found.'});
+      } else {
+        return res.json({success: true, msg: 'List alerts', alerts:alert});
+      }
+    });
+  } else {
+    return res.status(403).send({success: false, msg: 'No token provided.'});
+  }
+});
+
 //Obetener la lista de alerta del usuario - usuario propio y usuario sender
 apiRoutes.post('/alerts_two', passport.authenticate('jwt', {session: false}), function(req, res) {
   var token = getToken(req.headers);
