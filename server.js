@@ -118,7 +118,7 @@ apiRoutes.get('/user', passport.authenticate('jwt', {session: false}), function(
 
 
 //Obetener un usuario por el ID - usuario propio
-apiRoutes.get('/user_id', passport.authenticate('jwt', {session: false}), function(req, res) {
+apiRoutes.post('/user_id', passport.authenticate('jwt', {session: false}), function(req, res) {
   var token = getToken(req.headers);
   if (token) {
     User.findOne({_id: req.body._id}, function(err, user) {
