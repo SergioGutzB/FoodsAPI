@@ -116,6 +116,25 @@ apiRoutes.get('/user', passport.authenticate('jwt', {session: false}), function(
   }
 });
 
+
+//Obetener un usuario por el ID - usuario propio
+apiRoutes.get('/user_id', passport.authenticate('jwt', {session: false}), function(req, res) {
+  var token = getToken(req.headers);
+  if (token) {
+    User.findOne({_id: req.body._id}, function(err, user) {
+      if (err) throw err;
+
+      if (!user) {
+        return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
+      } else {
+        return res.json({success: true, msg: 'Welcome in the member area ' + user.user_name + '!', user:user});
+      }
+    });
+  } else {
+    return res.status(403).send({success: false, msg: 'No token provided.'});
+  }
+});
+
 //Obetener la lista de alerta del usuario - usuario propio
 apiRoutes.post('/alerts', passport.authenticate('jwt', {session: false}), function(req, res) {
   var token = getToken(req.headers);
