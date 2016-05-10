@@ -88,11 +88,13 @@ apiRoutes.post('/authenticate', function(req, res) {
       user.comparePassword(req.body.password, function(err, isMatch) {
         if (isMatch && !err) {
           var token = jwt.encode(user, config.secret);
-          res.json({success: true, token: 'JWT ' + token});
           console.log("success: true")
+          res.json({success: true, token: 'JWT ' + token});
+
         } else {
-          res.send({success: false, msg: 'Authentication failed. Wrong password.'});
           console.log("success: false")
+          res.send({success: false, msg: 'Authentication failed. Wrong password.'});
+          
         }
       });
     }
