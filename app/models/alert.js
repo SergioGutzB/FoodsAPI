@@ -6,7 +6,7 @@ var AlertSchema = new Schema({
   sender_id: {type: String},
   user_id: {type: String},
   message: [],
-  create: {type: Date, default: Date.now}
+  create: {type: Date, default: Date.now},
   data_user: false,
   data_sender: false,
 });
