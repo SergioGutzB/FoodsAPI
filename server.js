@@ -234,6 +234,8 @@ apiRoutes.post('/update_alert', passport.authenticate('jwt', {session: false}), 
       return res.status(403).send({success: false, msg: 'Authentication failed. Alert not found.'});
     } else {
       if (req.body.message)   alert.message    = req.body.message;
+      if (req.body.data_user)   alert.data_user    = req.body.data_user;
+      if (req.body.data_sender)   alert.data_sender    = req.body.data_sender;
       
       alert.save(function(err){
         if (err) throw err;
